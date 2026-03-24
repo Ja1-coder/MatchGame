@@ -7,7 +7,7 @@ Um jogo da memória desenvolvido em C# utilizando .NET e XAML, onde o objetivo �
 O jogo consiste em um tabuleiro com cartas de animais viradas para baixo. O jogador deve clicar nas cartas para revelá-las e encontrar os pares correspondentes.
 
 - Existem **8 pares de animais** (16 cartas no total)
-- Ao clicar em uma carta, ela é revelada
+- Ao clicar em uma carta, ela desparece
 - Ao clicar na segunda carta:
   - ✅ Se for o par correto → ambas desaparecem
   - ❌ Se não for → a primeira carta volta ao estado inicial
