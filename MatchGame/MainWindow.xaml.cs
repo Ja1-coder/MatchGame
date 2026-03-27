@@ -57,7 +57,7 @@ namespace MatchGame
             }
         }
 
-        private void SetUpGame()
+        private async void SetUpGame()
         {
             List<string> animalEmoji = new List<string>()
             {
@@ -79,11 +79,28 @@ namespace MatchGame
                 {
                     textBlock.Visibility = Visibility.Visible;
                     int index = random.Next(animalEmoji.Count);
-                    string nextEmoji = animalEmoji[index];
-                    textBlock.Text = nextEmoji;
+
+                    string emoji = animalEmoji[index];
+                    textBlock.Tag = emoji;
+                    textBlock.Text = emoji;
+
                     animalEmoji.RemoveAt(index);
                 }
             }
+
+            mainGrind.IsEnabled = false;
+
+            await Task.Delay(2000);
+
+            foreach (TextBlock textBlock in mainGrind.Children.OfType<TextBlock>())
+            {
+                if (textBlock.Name != "timeTextBlock")
+                {
+                    textBlock.Text = "?";
+                }
+            }
+
+            mainGrind.IsEnabled = true;
 
             timer.Start();
             tenthsOfSecondsElapsed = 0;
@@ -92,32 +109,54 @@ namespace MatchGame
 
         TextBlock? lastTextBlockClicked;
         bool findingMath = false;
+        bool isProcessing = false;
 
-        private void TextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        private async void TextBlock_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender is not TextBlock textBlock)
+            if (isProcessing || sender is not TextBlock textBlock || textBlock.Text != "?")
+            {
                 return;
+            }
+
+            textBlock.Text = textBlock.Tag.ToString();
 
             if (!findingMath)
             {
-                textBlock.Visibility = Visibility.Hidden;
                 lastTextBlockClicked = textBlock;
                 findingMath = true;
             }
-            else if (lastTextBlockClicked != null && textBlock.Text == lastTextBlockClicked.Text)
+            else if (lastTextBlockClicked != null && textBlock.Tag.ToString() == lastTextBlockClicked.Tag.ToString())
             {
+                isProcessing = true;
+
                 matchesFound++;
+                await Task.Delay(500);
+
                 textBlock.Visibility = Visibility.Hidden;
+                lastTextBlockClicked.Visibility = Visibility.Hidden;
+
                 findingMath = false;
+                lastTextBlockClicked = null;
+
+                isProcessing = false;
             }
             else
             {
+                isProcessing = true;
+
+                await Task.Delay(500);
+
+                textBlock.Text = "?";
+
                 if (lastTextBlockClicked != null)
                 {
-                    lastTextBlockClicked.Visibility = Visibility.Visible;
+                    lastTextBlockClicked.Text = "?";
                 }
 
                 findingMath = false;
+                lastTextBlockClicked = null;
+
+                isProcessing = false;
             }
         }
 
