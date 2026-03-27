@@ -34,11 +34,26 @@ namespace MatchGame
         private void Timer_Tick(object? sender, EventArgs e)
         {
             tenthsOfSecondsElapsed++;
-            timeTextBlock.Text = (tenthsOfSecondsElapsed / 10F).ToString("0.0s");
+            float currentTime = tenthsOfSecondsElapsed / 10F;
+            timeTextBlock.Text = currentTime.ToString("0.0s");
+
             if (matchesFound == 8)
             {
                 timer.Stop();
-                timeTextBlock.Text = timeTextBlock.Text + " - Novo Jogo ?";
+
+                if (matchesFound == 8 && currentTime < GameInfo.BestTime)
+                {
+                    GameInfo.BestTime = currentTime;
+                    timeTextBlock.Text = currentTime.ToString("0.0s - Novo Recorde!");
+                }
+
+                MessageBoxResult result = MessageBox.Show("Parabéns! Voltar ao menu?", "Fim de Jogo", MessageBoxButton.YesNo);
+
+                if (result == MessageBoxResult.Yes) {
+                    WindowMenu menu = new WindowMenu();
+                    menu.Show();
+                    this.Close();
+                }
             }
         }
 
